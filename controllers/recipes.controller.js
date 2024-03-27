@@ -3,7 +3,10 @@ import { RecipeModel } from "../models/recipe.js";
 export const addRecipe = async (req, res, next) => {
   try {
     //   Add recipe to database
-    const createResult = await RecipeModel.create(req.body);
+    const createResult = await RecipeModel.create({
+      ...req.body,
+      image: req.file.filename,
+    });
     // Return response
     res.status(201).json(createResult);
   } catch (error) {
@@ -28,13 +31,12 @@ export const getRecipe = async (req, res, next) => {
     const findByIdResult = await RecipeModel.findById(req.params.id);
     // Return 404 if no recipe is found
     if (findByIdResult === null) {
-       res.status(404).json({
+      res.status(404).json({
         message: `Recipe with ID: ${req.params.id} not found!`,
       });
-    }
-    else {
+    } else {
       // Return response
-    res.status(200).json(findByIdResult);
+      res.status(200).json(findByIdResult);
     }
   } catch (error) {
     next(error);
